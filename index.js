@@ -1,18 +1,35 @@
 const express = require('express');
 const { ApolloServer, gql } = require('apollo-server-express');
 
-const products_data = [
-    { id: '1', nombre: 'Torta de chocolate', precio: 15000, disponible: true },
-    { id: '2', nombre: 'Cheesecake de maracuyá', precio: 18000, disponible: false },
-    { id: '3', nombre: 'Kuchen de manzana', precio: 12000, disponible: true },
-  ];
+products_data = [
+    {
+      "name": "TORTA CIRUELA ESPECIAL",
+      "price": "$29.000",
+      "image": "https://pastelerialapalmera.cl/wp-content/uploads/2021/02/torta_ciruela_especial_pasteleria_la_palmera.jpg",
+      "category": "Tortas",
+      "dispatch": "True",
+      "ingredients": [
+        "BIZCOCHO DE CIRUELA",
+        "RELLENA DE MANJAR",
+        "RELLENA DE MERMELADA DE CIRUELA",
+        "NUEZ",
+        "CREMA CHANTILLY DE CHOCOLATE Y CUBIERTA DE MERENGUE"
+      ],
+      "portions": "",
+      "id": 3
+    }
+]
 
 const typeDefs = gql`
   type Product {
     id: ID!
-    nombre: String!
-    precio: Int!
-    disponible: Boolean!
+    name: String!
+    price: Int!
+    image: String!
+    category: String!
+    dispatch: String!
+    ingredients: [String!]!
+    portions: String!
   }
 
   type Query {
