@@ -1,0 +1,19 @@
+
+@host = http://localhost:4000
+@host = https://f4d5341f-8f43-4a42-b9e7-fd8a0c1cfb37-00-5ni5latmswlf.janeway.replit.dev
+
+###
+curl {{host}}/health
+
+###
+curl --request POST \
+  --header 'content-type: application/json' \
+  --url {{host}}/graphql \
+  --data '{"query":"query { hello }"}'
+
+
+###
+curl --request POST \
+  --header 'content-type: application/json' \
+  --url {{host}}/graphql \
+  --data '{"query":"query { products { id name } }"}'
