@@ -1,5 +1,7 @@
 const express = require('express');
 const { ApolloServer, gql } = require('apollo-server-express');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const typeDefs = gql`
   type Product {
@@ -23,8 +25,8 @@ const typeDefs = gql`
 
 const getProductsByIngredients = (_, { ingredientName }) => {
   console.log("getProductsByIngredients", ingredientName)
-  const HOST = "http://localhost:8000"
-  const URL = `${HOST}/v2/productos/productos?ingredientes=${ingredientName.join(',')}`
+  const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
+  const URL = `${HOST}/v2/productos?ingredientes=${ingredientName.join(',')}`
   console.log("URL", URL)
   return fetch(URL)
     .then(response => response.json())
@@ -40,7 +42,7 @@ const getProductsByIngredients = (_, { ingredientName }) => {
 
 const getCakesByIngredients = (_, { ingredientName }) => {
   console.log("getCakesByIngredients", ingredientName)
-  const HOST = "http://localhost:8000"
+  const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
   const URL = `${HOST}/v2/productos/tortas?ingredientes=${ingredientName.join(',')}`
   console.log("URL", URL)
   return fetch(URL)
@@ -57,7 +59,7 @@ const getCakesByIngredients = (_, { ingredientName }) => {
 
 const getDessertsByIngredients = (_, { ingredientName }) => {
   console.log("getDessertsByIngredients", ingredientName)
-  const HOST = "http://localhost:8000"
+  const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
   const URL = `${HOST}/v2/productos/postres?ingredientes=${ingredientName.join(',')}`
   console.log("URL", URL)
   return fetch(URL)
@@ -88,7 +90,7 @@ async function startServer() {
 
   server.applyMiddleware({ app });
 
-  const PORT = 4000;
+  const PORT = process.env.PORT || 3000;
   app.listen(PORT, () =>
     console.log(`🚀 Server listo en http://localhost:${PORT}${server.graphqlPath}`)
   );
