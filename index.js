@@ -17,16 +17,16 @@ const typeDefs = gql`
 
   type Query {
     health: String
-    productsByIngredients(ingredientName: [String!]!): [Product!]!,
-    cakesByIngredients(ingredientName: [String!]!): [Product!]!,
-    dessertsByIngredients(ingredientName: [String!]!): [Product!]!
+    productsByIngredients(ingredientNames: [String!]!): [Product!]!,
+    cakesByIngredients(ingredientNames: [String!]!): [Product!]!,
+    dessertsByIngredients(ingredientNames: [String!]!): [Product!]!
   }
 `;
 
-const getProductsByIngredients = (_, { ingredientName }) => {
-  console.log("getProductsByIngredients", ingredientName)
+const getProductsByIngredients = (_, { ingredientNames }) => {
+  console.log("getProductsByIngredients", ingredientNames)
   const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
-  const URL = `${HOST}/v2/productos?ingredientes=${ingredientName.join(',')}`
+  const URL = `${HOST}/v2/productos?ingredientes=${ingredientNames.join(',')}`
   console.log("URL", URL)
   return fetch(URL)
     .then(response => response.json())
@@ -40,10 +40,10 @@ const getProductsByIngredients = (_, { ingredientName }) => {
     });
 }
 
-const getCakesByIngredients = (_, { ingredientName }) => {
-  console.log("getCakesByIngredients", ingredientName)
+const getCakesByIngredients = (_, { ingredientNames }) => {
+  console.log("getCakesByIngredients", ingredientNames)
   const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
-  const URL = `${HOST}/v2/productos/tortas?ingredientes=${ingredientName.join(',')}`
+  const URL = `${HOST}/v2/productos/tortas?ingredientes=${ingredientNames.join(',')}`
   console.log("URL", URL)
   return fetch(URL)
     .then(response => response.json())
@@ -57,10 +57,10 @@ const getCakesByIngredients = (_, { ingredientName }) => {
     });
 }
 
-const getDessertsByIngredients = (_, { ingredientName }) => {
-  console.log("getDessertsByIngredients", ingredientName)
+const getDessertsByIngredients = (_, { ingredientNames }) => {
+  console.log("getDessertsByIngredients", ingredientNames)
   const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
-  const URL = `${HOST}/v2/productos/postres?ingredientes=${ingredientName.join(',')}`
+  const URL = `${HOST}/v2/productos/postres?ingredientes=${ingredientNames.join(',')}`
   console.log("URL", URL)
   return fetch(URL)
     .then(response => response.json())
