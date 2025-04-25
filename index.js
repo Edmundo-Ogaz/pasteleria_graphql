@@ -1,25 +1,6 @@
 const express = require('express');
 const { ApolloServer, gql } = require('apollo-server-express');
 
-products_data = [
-    {
-      "name": "TORTA CIRUELA ESPECIAL",
-      "price": "$29.000",
-      "image": "https://pastelerialapalmera.cl/wp-content/uploads/2021/02/torta_ciruela_especial_pasteleria_la_palmera.jpg",
-      "category": "Tortas",
-      "dispatch": "True",
-      "ingredients": [
-        "BIZCOCHO DE CIRUELA",
-        "RELLENA DE MANJAR",
-        "RELLENA DE MERMELADA DE CIRUELA",
-        "NUEZ",
-        "CREMA CHANTILLY DE CHOCOLATE Y CUBIERTA DE MERENGUE"
-      ],
-      "portions": "",
-      "id": 3
-    }
-]
-
 const typeDefs = gql`
   type Product {
     id: ID!
@@ -33,20 +14,73 @@ const typeDefs = gql`
   }
 
   type Query {
-    hello: String,
-    products: [Product!]!
+    health: String
+    productsByIngredients(ingredientName: [String!]!): [Product!]!,
+    cakesByIngredients(ingredientName: [String!]!): [Product!]!,
+    dessertsByIngredients(ingredientName: [String!]!): [Product!]!
   }
 `;
 
-// 2. Definir los resolvers
+const getProductsByIngredients = (_, { ingredientName }) => {
+  console.log("getProductsByIngredients", ingredientName)
+  const HOST = "http://localhost:8000"
+  const URL = `${HOST}/v2/productos/productos?ingredientes=${ingredientName.join(',')}`
+  console.log("URL", URL)
+  return fetch(URL)
+    .then(response => response.json())
+    .then(data => {
+      console.log("data", data)
+      return data
+    })
+    .catch(error => {
+      console.error('Error fetching products:', error);
+      throw new Error('Failed to fetch products');
+    });
+}
+
+const getCakesByIngredients = (_, { ingredientName }) => {
+  console.log("getCakesByIngredients", ingredientName)
+  const HOST = "http://localhost:8000"
+  const URL = `${HOST}/v2/productos/tortas?ingredientes=${ingredientName.join(',')}`
+  console.log("URL", URL)
+  return fetch(URL)
+    .then(response => response.json())
+    .then(data => {
+      console.log("data", data)
+      return data
+    })
+    .catch(error => {
+      console.error('Error fetching cakes:', error);
+      throw new Error('Failed to fetch cakes');
+    });
+}
+
+const getDessertsByIngredients = (_, { ingredientName }) => {
+  console.log("getDessertsByIngredients", ingredientName)
+  const HOST = "http://localhost:8000"
+  const URL = `${HOST}/v2/productos/postres?ingredientes=${ingredientName.join(',')}`
+  console.log("URL", URL)
+  return fetch(URL)
+    .then(response => response.json())
+    .then(data => {
+      console.log("data", data)
+      return data
+    })
+    .catch(error => {
+      console.error('Error fetching desserts:', error);
+      throw new Error('Failed to fetch desserts');
+    });
+}
+
 const resolvers = {
   Query: {
-    hello: () => '¡Hola desde GraphQL!',
-    products: () => products_data,    
+    health: () => `OK`,
+    productsByIngredients: getProductsByIngredients,
+    cakesByIngredients: getCakesByIngredients,
+    dessertsByIngredients: getDessertsByIngredients
   },
 };
 
-// 3. Crear el servidor Apollo
 async function startServer() {
   const app = express();
   const server = new ApolloServer({ typeDefs, resolvers });
