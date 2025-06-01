@@ -19,14 +19,16 @@ const typeDefs = gql`
     health: String
     productsByIngredients(ingredientNames: [String!]!): [Product!]!,
     cakesByIngredients(ingredientNames: [String!]!): [Product!]!,
-    dessertsByIngredients(ingredientNames: [String!]!): [Product!]!
+    dessertsByIngredients(ingredientNames: [String!]!): [Product!]!,
+    cocktailsByIngredients(ingredientNames: [String!]!): [Product!]!,
+    kutchensByIngredients(ingredientNames: [String!]!): [Product!]!
   }
 `;
 
 const getProductsByIngredients = (_, { ingredientNames }) => {
   console.log("getProductsByIngredients", ingredientNames)
   const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
-  const URL = `${HOST}/v2/productos?ingredientes=${ingredientNames.join(',')}`
+  const URL = `${HOST}/api/v1.0/products?ingredients=${ingredientNames.join(',')}`
   console.log("URL", URL)
   return fetch(URL)
     .then(response => response.json())
@@ -43,7 +45,7 @@ const getProductsByIngredients = (_, { ingredientNames }) => {
 const getCakesByIngredients = (_, { ingredientNames }) => {
   console.log("getCakesByIngredients", ingredientNames)
   const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
-  const URL = `${HOST}/v2/productos/tortas?ingredientes=${ingredientNames.join(',')}`
+  const URL = `${HOST}/api/v1.0/products/cakes?ingredients=${ingredientNames.join(',')}`
   console.log("URL", URL)
   return fetch(URL)
     .then(response => response.json())
@@ -60,7 +62,41 @@ const getCakesByIngredients = (_, { ingredientNames }) => {
 const getDessertsByIngredients = (_, { ingredientNames }) => {
   console.log("getDessertsByIngredients", ingredientNames)
   const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
-  const URL = `${HOST}/v2/productos/postres?ingredientes=${ingredientNames.join(',')}`
+  const URL = `${HOST}/api/v1.0/products/desserts?ingredients=${ingredientNames.join(',')}`
+  console.log("URL", URL)
+  return fetch(URL)
+    .then(response => response.json())
+    .then(data => {
+      console.log("data", data)
+      return data
+    })
+    .catch(error => {
+      console.error('Error fetching desserts:', error);
+      throw new Error('Failed to fetch desserts');
+    });
+}
+
+const getCocktailsByIngredients = (_, { ingredientNames }) => {
+  console.log("getCocktailsByIngredients", ingredientNames)
+  const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
+  const URL = `${HOST}/api/v1.0/products/cocktails?ingredients=${ingredientNames.join(',')}`
+  console.log("URL", URL)
+  return fetch(URL)
+    .then(response => response.json())
+    .then(data => {
+      console.log("data", data)
+      return data
+    })
+    .catch(error => {
+      console.error('Error fetching desserts:', error);
+      throw new Error('Failed to fetch desserts');
+    });
+}
+
+const getKutchensByIngredients = (_, { ingredientNames }) => {
+  console.log("getCocktailsByIngredients", ingredientNames)
+  const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
+  const URL = `${HOST}/api/v1.0/products/kutchens?ingredients=${ingredientNames.join(',')}`
   console.log("URL", URL)
   return fetch(URL)
     .then(response => response.json())
@@ -79,7 +115,9 @@ const resolvers = {
     health: () => `OK`,
     productsByIngredients: getProductsByIngredients,
     cakesByIngredients: getCakesByIngredients,
-    dessertsByIngredients: getDessertsByIngredients
+    dessertsByIngredients: getDessertsByIngredients,
+    cocktailsByIngredients: getCocktailsByIngredients,
+    kutchensByIngredients: getKutchensByIngredients
   },
 };
 

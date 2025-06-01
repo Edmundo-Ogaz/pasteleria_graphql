@@ -13,4 +13,19 @@ curl --request POST \
 curl --request POST \
   --header 'content-type: application/json' \
   --url {{host}}/graphql \
-  --data '{"query":"query { productsByIngredients(ingredientName: [\"chocolate\"]) { id name } }"}'
+  --data '{"query":"query { productsByIngredients(ingredientNames: [\"chocolate\"]) { id name } }"}'
+
+###
+curl --request POST \
+  --header 'content-type: application/json' \
+  --url {{host}}/graphql \
+  --data '{"query":"query { cakesByIngredients(ingredientNames: [\"chocolate\"]) { id name } }"}'
+
+###
+curl --request POST \
+  --header 'content-type: application/json' \
+  --url {{host}}/graphql \
+  --data '{"query":"query { dessertsByIngredients(ingredientNames: [\"chocolate\"]) { id name } }"}'
+
+###
+curl http://192.168.0.2:8080/api/v1.0/products/desserts?ingredients=manjar
