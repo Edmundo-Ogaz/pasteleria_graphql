@@ -3,6 +3,43 @@ const { ApolloServer, gql } = require('apollo-server-express');
 const dotenv = require('dotenv');
 dotenv.config();
 
+function fetchWithRetries(url, retries = 3, delay = 2000) {
+  return new Promise((resolve, reject) => {
+    const attempt = (n) => {
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            if ((response.status === 502 || response.status === 503) && n > 0) {
+              console.warn(`Intento fallido (${response.status}). Reintentando en ${delay} ms...`);
+              setTimeout(() => attempt(n - 1), delay);
+            } else {
+              console.error(`Error HTTP: ${response.status}`);
+              response.text().then(text => console.error(text));
+              reject(new Error(`Failed with status ${response.status}`));
+            }
+          } else {
+            return response.json().then(data => {
+              console.log("data", data);
+              resolve(data);
+            });
+          }
+        })
+        .catch(error => {
+          if (n > 0) {
+            console.warn(`Error de red: ${error}. Reintentando en ${delay} ms...`);
+            setTimeout(() => attempt(n - 1), delay);
+          } else {
+            console.error('Error definitivo al hacer fetch:', error);
+            reject(new Error('Failed to fetch cakes after retries'));
+          }
+        });
+    };
+
+    attempt(retries);
+  });
+}
+
+
 const typeDefs = gql`
   type Product {
     id: ID!
@@ -30,8 +67,7 @@ const getProductsByIngredients = (_, { ingredientNames }) => {
   const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
   const URL = `${HOST}/api/v1.0/products?ingredients=${ingredientNames.join(',')}`
   console.log("URL", URL)
-  return fetch(URL)
-    .then(response => response.json())
+  return fetchWithRetries(URL)
     .then(data => {
       console.log("data", data)
       return data
@@ -47,8 +83,7 @@ const getCakesByIngredients = (_, { ingredientNames }) => {
   const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
   const URL = `${HOST}/api/v1.0/products/cakes?ingredients=${ingredientNames.join(',')}`
   console.log("URL", URL)
-  return fetch(URL)
-    .then(response => response.json())
+  return fetchWithRetries(URL)
     .then(data => {
       console.log("data", data)
       return data
@@ -64,8 +99,7 @@ const getDessertsByIngredients = (_, { ingredientNames }) => {
   const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
   const URL = `${HOST}/api/v1.0/products/desserts?ingredients=${ingredientNames.join(',')}`
   console.log("URL", URL)
-  return fetch(URL)
-    .then(response => response.json())
+  return fetchWithRetries(URL)
     .then(data => {
       console.log("data", data)
       return data
@@ -81,8 +115,7 @@ const getCocktailsByIngredients = (_, { ingredientNames }) => {
   const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
   const URL = `${HOST}/api/v1.0/products/cocktails?ingredients=${ingredientNames.join(',')}`
   console.log("URL", URL)
-  return fetch(URL)
-    .then(response => response.json())
+  return fetchWithRetries(URL)
     .then(data => {
       console.log("data", data)
       return data
@@ -98,8 +131,7 @@ const getKutchensByIngredients = (_, { ingredientNames }) => {
   const HOST = process.env.PASTELERIA_PRODUCTS_API || "http://localhost:9000"
   const URL = `${HOST}/api/v1.0/products/kutchens?ingredients=${ingredientNames.join(',')}`
   console.log("URL", URL)
-  return fetch(URL)
-    .then(response => response.json())
+  return fetchWithRetries(URL)
     .then(data => {
       console.log("data", data)
       return data
